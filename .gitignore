@@ -1,19 +1,20 @@
-# Python
+# Python cache
 __pycache__/
 *.pyc
-.venv/
-venv/
 
-# Jupyter
-.ipynb_checkpoints/
-
-# OS
-.DS_Store
-
-# Data & artifacts
+# Data
 data/raw/
 data/processed/
-artifacts/
-*.csv
-*.pkl
-*.joblib
+
+# Artifacts
+artifacts/models/
+artifacts/metrics/
+artifacts/reports/
+artifacts/reports/figures/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Environments
+.venv/
+.env

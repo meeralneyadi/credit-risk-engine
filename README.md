@@ -1,5 +1,5 @@
-# Credit Risk Engine
-End-to-End Machine Learning System for Credit Decisioning
+#💰 Credit Risk Engine
+Production-Grade Credit Risk Modeling and Decision Engine
 
 ---
 

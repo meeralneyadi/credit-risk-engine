@@ -1,4 +1,4 @@
-#💰 Credit Risk Engine
+# 💲Credit Risk Engine
 Production-Grade Credit Risk Modeling and Decision Engine
 
 ---

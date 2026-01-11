@@ -6,11 +6,11 @@ End-to-End Machine Learning System for Credit Decisioning
 ## Overview
 This project implements a production-style credit risk engine that predicts the Probability of Default (PD) for credit applicants and converts it into business decisions:
 
-- APPROVE  
-- REVIEW  
-- REJECT  
+- APPROVE
+- REVIEW
+- REJECT
 
-Unlike basic classification projects, this system focuses on real-world credit risk practices including probability calibration, cost-sensitive decision making, and deployable APIs.
+Unlike basic classification projects, this system follows real-world credit risk practices including probability calibration, cost-sensitive decision making, and deployable APIs.
 
 ---
 
@@ -21,7 +21,7 @@ Unlike basic classification projects, this system focuses on real-world credit r
 - Cost-based decision threshold optimization
 - Strict train / validation / test separation (no data leakage)
 - FastAPI service with interactive Swagger documentation
-- Reusable core engine code in `src/` (not notebook-only)
+- Reusable core engine code in `src/`
 - Policy analytics including approval and default rates per bucket
 
 ---
@@ -29,11 +29,11 @@ Unlike basic classification projects, this system focuses on real-world credit r
 ## Project Structure
 
     credit-risk-engine/
-    ├── api/                    # FastAPI application
+    ├── api/
     │   ├── app.py
     │   └── schemas.py
     │
-    ├── src/                    # Core ML and business logic
+    ├── src/
     │   ├── data_prep.py
     │   ├── train.py
     │   ├── calibrate.py
@@ -41,14 +41,14 @@ Unlike basic classification projects, this system focuses on real-world credit r
     │   ├── metrics.py
     │   └── config.py
     │
-    ├── notebooks/              # EDA and experimentation
+    ├── notebooks/
     │   ├── 01_eda_application.ipynb
     │   ├── 02_feature_engineering.ipynb
     │   ├── 03_training_leaderboard.ipynb
     │   └── 04_decision_engine_demo.ipynb
     │
-    ├── data/                   # Local only (ignored by Git)
-    ├── artifacts/              # Models and reports (ignored by Git)
+    ├── data/        (ignored by Git)
+    ├── artifacts/   (ignored by Git)
     │
     ├── README.md
     ├── requirements.txt
@@ -89,7 +89,7 @@ The final model is calibrated using Isotonic Regression:
 - Calibration learned on the validation set
 - Final performance evaluated on the test set
 
-This ensures probability outputs are suitable for real-world decision making.
+This ensures probability outputs are suitable for decision making.
 
 ---
 
@@ -97,7 +97,7 @@ This ensures probability outputs are suitable for real-world decision making.
 Predicted probabilities of default are converted into actions using cost-sensitive optimization.
 
 | Decision | Description |
-|--------|-------------|
+|---------|------------|
 | APPROVE | Low predicted risk |
 | REVIEW  | Medium risk requiring manual underwriting |
 | REJECT  | High predicted risk |
@@ -159,8 +159,8 @@ Machine Learning, Data, Systems
 
 ---
 
-## FINAL STEPS (LAST TIME I PROMISE)
+### Final commands (last time):
 ```bash
 git add README.md
-git commit -m "Fix README formatting and structure"
+git commit -m "Finalize README documentation"
 git push

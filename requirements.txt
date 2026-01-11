@@ -1,11 +1,9 @@
-numpy
 pandas
+numpy
 scikit-learn
-matplotlib
-seaborn
-xgboost
-lightgbm
-shap
-mlflow
+joblib
 fastapi
 uvicorn
+matplotlib
+seaborn
+openpyxl

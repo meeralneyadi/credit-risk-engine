@@ -15,14 +15,14 @@ Unlike basic classification projects, this system follows real-world credit risk
 ---
 
 ## Key Features
-- Multiple machine learning models benchmarked (Logistic Regression, Random Forest, Gradient Boosting)
+- Multiple machine learning models benchmarked
 - Automatic model selection based on discrimination and calibration metrics
 - Isotonic calibration for reliable probability of default estimates
 - Cost-based decision threshold optimization
-- Strict train / validation / test separation (no data leakage)
-- FastAPI service with interactive Swagger documentation
+- Strict train / validation / test separation
+- FastAPI service with Swagger documentation
 - Reusable core engine code in `src/`
-- Policy analytics including approval and default rates per bucket
+- Policy analytics and reporting
 
 ---
 
@@ -57,110 +57,64 @@ Unlike basic classification projects, this system follows real-world credit risk
 ---
 
 ## Dataset
-- Source: UCI – Default of Credit Card Clients
-- Size: approximately 30,000 applicants
-- Target: binary default indicator
-- Default rate: approximately 22%
+- UCI – Default of Credit Card Clients
+- Approximately 30,000 applicants
+- Binary default target
+- Default rate around 22%
 
-The dataset contains demographic, financial, and repayment history features suitable for classical credit risk modeling.
-
-Raw and processed data are intentionally excluded from version control.
+Raw and processed data are excluded from version control.
 
 ---
 
 ## Modeling and Evaluation
-
-### Models Evaluated
-- Logistic Regression (baseline)
+Models evaluated:
+- Logistic Regression
 - Random Forest
-- Histogram Gradient Boosting (selected model)
+- Histogram Gradient Boosting (selected)
 
-### Metrics Used
+Metrics:
 - ROC-AUC
 - PR-AUC
 - Log Loss
 - Brier Score
 - KS Statistic
-- Expected Calibration Error (ECE)
+- Expected Calibration Error
 
-### Calibration
-The final model is calibrated using Isotonic Regression:
-- Base model trained on the training set
-- Calibration learned on the validation set
-- Final performance evaluated on the test set
-
-This ensures probability outputs are suitable for decision making.
+The final model is calibrated using isotonic regression to ensure reliable probability estimates.
 
 ---
 
 ## Decision Engine
-Predicted probabilities of default are converted into actions using cost-sensitive optimization.
+Predicted probabilities are mapped to actions using cost-sensitive optimization.
 
 | Decision | Description |
-|---------|------------|
-| APPROVE | Low predicted risk |
-| REVIEW  | Medium risk requiring manual underwriting |
-| REJECT  | High predicted risk |
+|---------|-------------|
+| APPROVE | Low risk |
+| REVIEW  | Medium risk |
+| REJECT  | High risk |
 
-Thresholds are selected by minimizing total expected cost on the validation set and evaluated on the test set.
+Thresholds minimize total expected cost on the validation set.
 
 ---
 
-## API (FastAPI)
+## API
+The system is deployed using FastAPI and exposes endpoints for health checks and prediction.
 
-### Run the API
-```bash
-python -m uvicorn api.app:app --reload
-Endpoints
-GET /health – service health check
-POST /predict – predict probability of default and decision
-Example Request
-{
-  "features": {
-    "LIMIT_BAL": 20000,
-    "SEX": 2,
-    "EDUCATION": 2,
-    "MARRIAGE": 1,
-    "AGE": 24,
-    "PAY_0": 0
-  }
-}
-Example Response
-{
-  "pd": 0.18,
-  "decision": "REVIEW",
-  "thresholds": {
-    "t_approve": 0.05,
-    "t_reject": 0.63
-  }
-}
-Reproduce Results
-From the project root:
-python -m src.data_prep
-python -m src.train
-python -m src.calibrate
-python -m src.policy
-Design Principles
-No data leakage
-Separation of modeling and business logic
-Reproducible artifacts
-API-first design
-Realistic credit risk assumptions
-Future Improvements
-Review capacity constraints
-Batch prediction endpoint
-SHAP-based explanations
-Model monitoring and drift detection
-CI/CD for retraining pipelines
-Author
-Meera AlNeyadi
-Computer Science and Software Engineering
+- GET `/health`
+- POST `/predict`
+
+---
+
+## Design Principles
+- No data leakage
+- Separation of modeling and business logic
+- Reproducible artifacts
+- API-first design
+- Realistic credit risk assumptions
+
+---
+
+## Author
+Meera AlNeyadi  
+Computer Science and Software Engineering  
 Machine Learning, Data, Systems
-
----
-
-### Final commands (last time):
-```bash
-git add README.md
-git commit -m "Finalize README documentation"
-git push

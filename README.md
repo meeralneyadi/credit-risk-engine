@@ -117,4 +117,4 @@ The system is deployed using FastAPI and exposes endpoints for health checks and
 ## Author
 Meera AlNeyadi  
 Computer Science and Software Engineering  
-Machine Learning, Data, Systems
+Engineering | Intelligence | Scale

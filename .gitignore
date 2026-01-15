@@ -18,3 +18,4 @@ artifacts/reports/figures/
 # Environments
 .venv/
 .env
+.DS_Store

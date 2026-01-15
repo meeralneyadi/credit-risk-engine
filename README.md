@@ -106,6 +106,47 @@ Thresholds are selected by minimizing total expected cost on the validation set 
 
 ---
 
+## Results Snapshot
+
+### Model Performance
+- ROC-AUC: ~0.77
+- PR-AUC: ~0.46
+- Brier Score (after calibration): improved vs. uncalibrated model
+- Calibration: Isotonic Regression
+
+The calibrated model produces reliable probability of default (PD) estimates suitable for decision-making.
+
+---
+
+### Decision Policy (Test Set)
+Optimized using cost-sensitive thresholds:
+
+- Approve if PD < 0.05
+- Review if 0.05 ≤ PD < 0.67
+- Reject if PD ≥ 0.67
+
+Observed outcomes on the test set:
+- Approval rate: ~4–5%
+- Review rate: ~90%+
+- Rejection rate: ~4–5%
+- Default rate among approved applicants: ~4%
+
+This reflects a conservative credit policy prioritizing risk control and loss minimization.
+
+---
+
+### Example Predictions (API)
+Real test-set applicants evaluated through the deployed API:
+
+- PD = 0.0469 → APPROVE  
+- PD = 0.0876 → REVIEW  
+- PD = 0.1504 → REVIEW  
+- PD = 0.2265 → REVIEW  
+
+The API returns calibrated PDs, business decisions, and applied thresholds consistently.
+
+---
+
 ## API (FastAPI)
 
 ### Run the API

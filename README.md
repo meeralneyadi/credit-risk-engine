@@ -1,81 +1,62 @@
 # Credit Risk Engine
-End-to-End Machine Learning System for Credit Decisioning
+Production-Grade Credit Risk Modeling and Decision Engine
 
 ---
 
 ## Overview
-This project implements a production-style credit risk engine that predicts the Probability of Default (PD) for credit applicants and converts it into business decisions:
+This project implements a **production-grade credit risk system** that estimates the **Probability of Default (PD)** for credit applicants and converts those estimates into **business decisions**.
 
-- APPROVE  
-- REVIEW  
-- REJECT  
+Rather than focusing only on predictive accuracy, the system emphasizes:
+- probability calibration
+- cost-sensitive decision making
+- realistic credit policy design
+- deployability via an API
 
-Unlike basic classification projects, this system focuses on real-world credit risk practices including probability calibration, cost-sensitive decision making, and deployable APIs.
-
----
-
-## Key Features
-- Multiple machine learning models benchmarked (Logistic Regression, Random Forest, Gradient Boosting)
-- Automatic model selection based on discrimination and calibration metrics
-- Isotonic calibration for reliable probability of default estimates
-- Cost-based decision threshold optimization
-- Strict train / validation / test separation (no data leakage)
-- FastAPI service with interactive Swagger documentation
-- Reusable core engine code in `src/` (not notebook-only)
-- Policy analytics including approval and default rates per bucket
+The final output is a deployable decision engine capable of supporting real-world credit approval workflows.
 
 ---
 
-## Project Structure
-
-    credit-risk-engine/
-    ├── api/                    # FastAPI application
-    │   ├── app.py
-    │   └── schemas.py
-    │
-    ├── src/                    # Core ML and business logic
-    │   ├── data_prep.py
-    │   ├── train.py
-    │   ├── calibrate.py
-    │   ├── policy.py
-    │   ├── metrics.py
-    │   └── config.py
-    │
-    ├── notebooks/              # EDA and experimentation
-    │   ├── 01_eda_application.ipynb
-    │   ├── 02_feature_engineering.ipynb
-    │   ├── 03_training_leaderboard.ipynb
-    │   └── 04_decision_engine_demo.ipynb
-    │
-    ├── data/                   # Local only (ignored by Git)
-    ├── artifacts/              # Models and reports (ignored by Git)
-    │
-    ├── README.md
-    ├── requirements.txt
-    └── .gitignore
+## Project Objectives
+The main objectives of this project are to:
+- Train and evaluate multiple credit risk models
+- Select a model based on both discrimination and calibration performance
+- Produce reliable probability estimates suitable for decisioning
+- Translate predictions into business actions (Approve / Review / Reject)
+- Optimize decisions using cost-based thresholds
+- Expose the system through a FastAPI service
+- Validate the system using real test-set inputs
 
 ---
 
 ## Dataset
-- Source: UCI – Default of Credit Card Clients
-- Size: approximately 30,000 applicants
-- Target: binary default indicator
-- Default rate: approximately 22%
+- **Source:** UCI – Default of Credit Card Clients
+- **Size:** ~30,000 applicants
+- **Target:** Binary default indicator
+- **Default rate:** ~22%
 
-The dataset contains demographic, financial, and repayment history features suitable for classical credit risk modeling.
+The dataset includes demographic attributes, credit limits, payment history, bill amounts, and prior repayment behavior.
 
-Raw and processed data are intentionally excluded from version control.
+Raw and processed datasets are intentionally excluded from version control to reflect real-world data governance practices.
 
 ---
 
-## Modeling and Evaluation
+## Methodology
 
-### Models Evaluated
+### Data Preparation
+- Standardized feature names
+- Stratified train / validation / test split
+- Numerical feature scaling
+- Strict prevention of data leakage between splits
+
+---
+
+### Model Training and Selection
+The following models were trained and evaluated:
 - Logistic Regression (baseline)
 - Random Forest
-- Histogram Gradient Boosting (selected model)
+- Histogram Gradient Boosting
 
-### Metrics Used
+Models were compared using:
 - ROC-AUC
 - PR-AUC
 - Log Loss
@@ -83,26 +64,36 @@ Raw and processed data are intentionally excluded from version control.
 - KS Statistic
 - Expected Calibration Error (ECE)
 
-### Calibration
-The final model is calibrated using Isotonic Regression:
-- Base model trained on the training set
-- Calibration learned on the validation set
-- Final performance evaluated on the test set
+The **Histogram Gradient Boosting** model achieved the best balance between predictive power and calibration.
 
-This ensures probability outputs are suitable for real-world decision making.
+---
+
+### Probability Calibration
+The selected model was calibrated using **Isotonic Regression** to improve the reliability of predicted probabilities.
+
+Calibration ensures that predicted PD values can be meaningfully interpreted and used in downstream business rules.
 
 ---
 
 ## Decision Engine
-Predicted probabilities of default are converted into actions using cost-sensitive optimization.
+Predicted probabilities are converted into business actions using cost-sensitive thresholds.
 
+### Decisions
 | Decision | Description |
 |--------|-------------|
-| APPROVE | Low predicted risk |
-| REVIEW  | Medium risk requiring manual underwriting |
-| REJECT  | High predicted risk |
+| APPROVE | Low-risk applicants |
+| REVIEW  | Medium-risk applicants requiring manual assessment |
+| REJECT  | High-risk applicants |
 
-Thresholds are selected by minimizing total expected cost on the validation set and evaluated on the test set.
+### Optimized Thresholds
+- Approve if PD < 0.05  
+- Review if 0.05 ≤ PD < 0.67  
+- Reject if PD ≥ 0.67  
+
+Thresholds were optimized to minimize total expected cost, accounting for:
+- losses from approving defaulted loans
+- opportunity cost of rejecting good applicants
+- operational cost of manual review
 
 ---
 
@@ -111,97 +102,71 @@ Thresholds are selected by minimizing total expected cost on the validation set 
 ### Model Performance
 - ROC-AUC: ~0.77
 - PR-AUC: ~0.46
-- Brier Score (after calibration): improved vs. uncalibrated model
-- Calibration: Isotonic Regression
+- Improved Brier Score after calibration
+- Stable probability estimates across risk buckets
 
-The calibrated model produces reliable probability of default (PD) estimates suitable for decision-making.
-
----
-
-### Decision Policy (Test Set)
-Optimized using cost-sensitive thresholds:
-
-- Approve if PD < 0.05
-- Review if 0.05 ≤ PD < 0.67
-- Reject if PD ≥ 0.67
-
-Observed outcomes on the test set:
+### Policy Outcomes (Test Set)
 - Approval rate: ~4–5%
-- Review rate: ~90%+
+- Review rate: ~90%
 - Rejection rate: ~4–5%
 - Default rate among approved applicants: ~4%
 
-This reflects a conservative credit policy prioritizing risk control and loss minimization.
+These results reflect a conservative credit policy focused on loss minimization and risk control.
 
 ---
 
-### Example Predictions (API)
-Real test-set applicants evaluated through the deployed API:
+## API Deployment
+The system is deployed using **FastAPI** and exposes endpoints for real-time inference.
 
-- PD = 0.0469 → APPROVE  
-- PD = 0.0876 → REVIEW  
-- PD = 0.1504 → REVIEW  
-- PD = 0.2265 → REVIEW  
+### Available Endpoints
+- `GET /health` – service health check
+- `POST /predict` – returns PD, decision, and applied thresholds
 
-The API returns calibrated PDs, business decisions, and applied thresholds consistently.
-
----
-
-## API (FastAPI)
-
-### Run the API
-```bash
-python -m uvicorn api.app:app --reload
-Endpoints
-GET /health – service health check
-POST /predict – predict probability of default and decision
-Example Request
-{
-  "features": {
-    "LIMIT_BAL": 20000,
-    "SEX": 2,
-    "EDUCATION": 2,
-    "MARRIAGE": 1,
-    "AGE": 24,
-    "PAY_0": 0
-  }
-}
-Example Response
-{
-  "pd": 0.18,
-  "decision": "REVIEW",
-  "thresholds": {
-    "t_approve": 0.05,
-    "t_reject": 0.63
-  }
-}
-Reproduce Results
-From the project root:
-python -m src.data_prep
-python -m src.train
-python -m src.calibrate
-python -m src.policy
-Design Principles
-No data leakage
-Separation of modeling and business logic
-Reproducible artifacts
-API-first design
-Realistic credit risk assumptions
-Future Improvements
-Review capacity constraints
-Batch prediction endpoint
-SHAP-based explanations
-Model monitoring and drift detection
-CI/CD for retraining pipelines
-Author
-Meera AlNeyadi
-Computer Science and Software Engineering
-Machine Learning, Data, Systems
+The API validates feature inputs and provides feedback on missing or extra features.
 
 ---
 
-## FINAL STEPS (LAST TIME I PROMISE)
-```bash
-git add README.md
-git commit -m "Fix README formatting and structure"
-git push
+## Testing and Validation
+The system was tested by sending real test-set samples through the deployed API.
+
+Validation confirmed:
+- correct PD computation
+- consistent decision logic
+- robust handling of missing features
+- stable API responses
+
+---
+
+## Project Structure
+
+    credit-risk-engine/
+    ├── api/                    # FastAPI application
+    ├── src/                    # Core modeling and decision logic
+    ├── notebooks/              # Analysis and visualization notebooks
+    ├── data/                   # Local only (ignored by Git)
+    ├── artifacts/              # Models and reports (ignored by Git)
+    ├── README.md
+    ├── requirements.txt
+    └── .gitignore
+
+---
+
+## Limitations and Future Work
+
+### Limitations
+- Single dataset
+- Static decision thresholds
+- No real-time monitoring or drift detection
+
+### Future Improvements
+- Dynamic thresholding based on review capacity
+- SHAP-based explainability
+- Model monitoring and retraining pipelines
+- Batch inference support
+
+---
+
+## Author
+Meera AlNeyadi  
+Computer Science and Software Engineering  
+
